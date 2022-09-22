@@ -6,6 +6,7 @@ LIBBPF_OBJ = $(abspath $(OUTPUT)/libbpf.a)
 
 CC = gcc
 CLANG = clang
+GO = go
 
 ARCH := $(shell uname -m)
 ARCH := $(subst x86_64,amd64,$(ARCH))
@@ -114,9 +115,36 @@ $(PROGRAM): libbpf | $(PROGRAM).bpf.o
                 -tags netgo -ldflags $(CGO_EXTLDFLAGS_STATIC) \
                 -o $(PROGRAM) ./$(PROGRAM).go
 
+
+
+## test deps
+
+DEPS = ctest gotest
+
+.PHONY: ctest
+ctest:
+	@if [ ! -x ctest ]; then \
+		$(CLANG) -o ctest test.c; \
+	fi
+
+.PHONY: gotest
+gotest:
+	@if [ ! -x gotest ]; then \
+		$(GO) build -o gotest test.go; \
+	 fi
+
+
+
+
+
 .PHONE: run
 run:
 	sudo ./main
+
+
+
+
+
 
 
 ## clean
