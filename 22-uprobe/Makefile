@@ -18,6 +18,15 @@ DBGVMLINUX = /usr/lib/debug/boot/vmlinux-$(shell uname -r)
 GIT = $(shell which git || /bin/false)
 VMLINUXH = vmlinux.h
 
+
+# test
+CGO_CFLAGS_STATIC = "-I$(abspath $(OUTPUT))"
+CGO_LDFLAGS_STATIC = "-lelf -lz $(LIBBPF_OBJ)"
+
+CGO_CFLAGS_DYN = "-I. -I/usr/include/"
+CGO_LDFLAGS_DYN = "-lelf -lz -lbpf"
+
+
 # libbpf
 
 LIBBPF_OBJDIR = $(abspath ./$(OUTPUT)/libbpf)
@@ -134,15 +143,24 @@ gotest:
 	 fi
 
 
+## test
+
+.PHONY: $(PROGRAM)-static
+.PHONY: $(PROGRAM)-dynamic
+
+$(PROGRAM)-static: $(PROGRAM)-bpf libbpfgo-static $(DEPS)
+	CC=$(CLANG) CGO_CFLAGS=$(CGO_CFLAGS_STATIC) CGO_LDFLAGS=$(CGO_LDFLAGS_STATIC) \
+	   $(GO) build -o $(PROGRAM)-static ./$(PROGRAM).go
+
+$(PROGRAM)-dynamic: $(PROGRAM)-bpf libbpfgo-dynamic $(DEPS)
+	CC=$(CLANG) CGO_CFLAGS=$(CGO_CFLAGS_DYN) CGO_LDFLAGS=$(CGO_LDFLAGS_DYN) \
+	   $(GO) build -o ./$(PROGRAM)-dynamic ./$(PROGRAM).go
 
 
 
 .PHONE: run
 run:
 	sudo ./main
-
-
-
 
 
 
