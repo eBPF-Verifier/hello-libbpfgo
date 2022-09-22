@@ -157,13 +157,19 @@ $(PROGRAM)-dynamic: $(PROGRAM)-bpf libbpfgo-dynamic $(DEPS)
 	   $(GO) build -o ./$(PROGRAM)-dynamic ./$(PROGRAM).go
 
 
+## run
 
-.PHONE: run
-run:
-	sudo ./main
+.PHONY: run
+.PHONY: run-static
+.PHONY: run-dynamic
 
+run: run-static
 
+run-static: $(PROGRAM)-static
+	sudo ./run.sh $(PROGRAM)-static
 
+run-dynamic: $(PROGRAM)-dynamic
+	sudo ./run.sh $(PROGRAM)-dynamic
 
 ## clean
 
