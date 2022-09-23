@@ -1,4 +1,4 @@
-module github.com/mozillazg/hello-libbpfgo/19-socket-filter-capture-icmp-traffic-kernel-parse
+module github.com/mozillazg/hello-libbpfgo/22-uprobe
 
 go 1.17
 
